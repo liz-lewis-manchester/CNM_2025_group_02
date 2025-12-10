@@ -25,7 +25,7 @@ def read_and_interpolate_initial_conditions(csv_path, x_grid,
     # Read CSV using pandas
     df = pd.read_csv(csv_path)
 
-    # Extract raw measurements
+    # Extract measurements
     x_measured = df[x_col].values
     theta_measured = df[theta_col].values
 
