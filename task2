@@ -1,0 +1,55 @@
+import pandas as pd
+import numpy as np
+
+def read_and_interpolate_initial_conditions(csv_path, x_grid,
+                                            x_col='x', theta_col='theta'):
+    """
+    Read initial_conditions.csv and interpolate the measurements onto the model grid.
+
+    Parameters
+    ----------
+    csv_path : str
+        Path to the CSV file.
+    x_grid : array-like
+        The model's spatial grid (e.g., produced using np.linspace).
+    x_col : str
+        Name of the column in the CSV that holds x-coordinates.
+    theta_col : str
+        Name of the column in the CSV that holds concentration values.
+
+    Returns
+    -------
+    theta_interp : np.ndarray
+        Interpolated concentration values matching the model grid.
+    """
+    # Read CSV using pandas
+    df = pd.read_csv(csv_path)
+
+    # Extract raw measurements
+    x_measured = df[x_col].values
+    theta_measured = df[theta_col].values
+
+    # Sort by x so interpolation works correctly
+    sort_idx = np.argsort(x_measured)
+    x_measured = x_measured[sort_idx]
+    theta_measured = theta_measured[sort_idx]
+
+    # Interpolate onto model grid
+    theta_interp = np.interp(
+        x_grid,               # target grid for the model
+        x_measured,           # measurement positions
+        theta_measured,       # measured concentrations
+        left=theta_measured[0],   # extrapolate left using nearest value
+        right=theta_measured[-1]  # extrapolate right using nearest value
+    )
+
+    return theta_interp
+
+# 1. make your grid
+x = np.linspace(0, 20, 101)   # example grid: 0–20 m, dx=0.2 m
+
+# 2. read & interpolate CSV initial conditions
+theta0 = read_and_interpolate_initial_conditions(
+    'data/initial_conditions.csv',
+    x
+)
