@@ -1,4 +1,4 @@
-Distance (m),Concentration (µg/m_ )
+Distance (m),Concentration (Âµg/m_ )
 0,300
 1,10
 2,10
@@ -20,3 +20,5 @@ Distance (m),Concentration (µg/m_ )
 18,40
 19,20
 20,10
+import numpy as np
+import pandas as pd
