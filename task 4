@@ -5,9 +5,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 #First, plot the graph for the initial conditions of concentration against distance
-def plot_initial conditions(x, theta0): 
+def plot_initial conditions(x_grid, theta0): 
 plt.figure
-plt.plot(x,theta0, label="Initial Concentration")
+plt.plot(x_grid,theta0, label="Initial Concentration")
 plt.xlabel("Distance (m)")
 plt.ylabel("Concentration (micro g/m^3)")
 plt.title("Pollutant concentration at the start")
@@ -15,3 +15,25 @@ plt.grid(True)
 plt.legend()
 plt.show()
 
+#Plot the results from the coded model
+#Plot a graph highlighting the concentration against distance at specific times
+def plot_graphs(theta, x_grid, t_grid):
+plt.figure
+plt.plot(x_grid, theta[0,:],label="Start")
+plt.plot(x_grid, theta[len(t_grid)//2, :], label="Midpoint")
+plt.plot(x_grid, theta[-1,:], label="End")
+plt.xlabel("Distance (m)")
+plt.ylabel("Concentration (micro g/m^3)")
+plt.title("Concentration profile over Time")
+plt.grid(True)
+plt.legend()
+plt.show()
+
+#Plot a heatmap, showing the evolution of the concentration across space and time
+plt.figure()
+plt.pcolormesh(x_grid, t_grid, theta)
+plt.colorbar(label="Concentration (micro g/m^3)")
+plt.xlabel("Distance (m)")
+plt.ylabel("Time (sec)")
+plt.title("Concentration evolution across Space and Time")
+plt.show()
