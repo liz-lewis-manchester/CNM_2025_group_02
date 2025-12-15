@@ -1,1 +1,17 @@
+#This branch contains the code for the visualisation of the results for the pollutant transport model.
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#First, plot the graph for the initial conditions of concentration against distance
+def plot_initial conditions(x, theta0): 
+plt.figure
+plt.plot(x,theta0, label="Initial Concentration")
+plt.xlabel("Distance (m)")
+plt.ylabel("Concentration (micro g/m^3)")
+plt.title("Pollutant concentration at the start")
+plt.grid(True)
+plt.legend()
+plt.show()
 
