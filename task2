@@ -1,3 +1,91 @@
+import numpy as np
+Initial concentration at x=0 for delta case (ug/m^3)
+csv_file : str
+Path to CSV file containing columns: x, concentration
+
+Returns
+-------
+theta0 : ndarray
+Initial concentration profile
+"""
+theta0 = np.zeros_like(x)
+
+if mode == "delta":
+theta0[0] = value
+
+elif mode == "csv":
+if csv_file is None:
+raise ValueError("csv_file must be provided when mode='csv'")
+data = pd.read_csv(csv_file)
+theta0 = np.interp(x, data["x"], data["concentration"])
+
+else:
+raise ValueError("Unknown initialisation mode")
+
+return theta0
+
+
+def solve_advection(x, t, theta0, U):
+"""
+Solve 1D advection equation using upwind finite differences.
+
+Parameters
+----------
+x : ndarray
+Spatial grid
+t : ndarray
+Time grid
+theta0 : ndarray
+Initial concentration
+U : float or ndarray
+Velocity (m/s), constant or spatially varying
+
+Returns
+-------
+theta : ndarray
+Concentration field (time, space)
+"""
+dx = x[1] - x[0]
+dt = t[1] - t[0]
+
+nx = len(x)
+nt = len(t)
+
+theta = np.zeros((nt, nx))
+theta[0, :] = theta0
+
+# Courant number check (basic stability guidance)
+if np.isscalar(U):
+if U * dt / dx > 1:
+raise ValueError("Unstable configuration: Courant number > 1")
+
+for n in range(0, nt - 1):
+for i in range(1, nx):
+u_local = U if np.isscalar(U) else U[i]
+theta[n + 1, i] = (
+theta[n, i]
+- u_local * dt / dx * (theta[n, i] - theta[n, i - 1])
+)
+# Boundary condition at x=0 (no inflow after initial release)
+theta[n + 1, 0] = 0.0
+
+return theta
+
+
+if __name__ == "__main__":
+# Example user-defined configuration
+x, t = create_domain(x_max=20.0, dx=0.2, t_max=300.0, dt=10.0)
+theta0 = initialise_concentration(x, mode="delta", value=250.0)
+theta = solve_advection(x, t, theta0, U=0.1)
+
+print("Simulation complete")
+print(f"Domain size: {len(x)} points, Time steps: {len(t)}")
+
+
+#######################################################
+test case 2
+#######################################################
+
 import pandas as pd
 import numpy as np
 
