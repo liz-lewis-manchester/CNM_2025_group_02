@@ -1,15 +1,28 @@
+#######################################################
+Task 2 code
+#######################################################
+
+"1D Advection model for pollutant transport in a river. Task 2 - Allow the user to specify the model domain and resolution"
+
 import numpy as np
 import pandas as pd
-Initial concentration at x=0 for delta case (ug/m^3)
-csv_file : str
-Path to CSV file containing columns: x, concentration
 
-Returns
--------
-theta0 : ndarray
-Initial concentration profile
+def create_domain(x_max: float, dx: float, t_max: float, dt: float):
 """
-theta0 = np.zeros_like(x)
+Creates spatial and temporal grids.
+"""
+if dx <= 0 or dt <= 0:
+raise ValueError("dx and dt must be positive")
+
+x = np.arange(0, x_max + dx, dx)
+t = np.arange(0, t_max + dt, dt)
+return x, t
+
+def initialise_concentration(x, mode="delta", value=250.0, csv_file=None):
+"""
+Initialises the pollutant concentration.
+"""
+theta0 = np.zeros_like(x, dtype=float)
 
 if mode == "delta":
 theta0[0] = value
@@ -18,6 +31,8 @@ elif mode == "csv":
 if csv_file is None:
 raise ValueError("csv_file must be provided when mode='csv'")
 data = pd.read_csv(csv_file)
+if not {"x", "concentration"}.issubset(data.columns):
+raise ValueError("CSV must contain 'x' and 'concentration' columns")
 theta0 = np.interp(x, data["x"], data["concentration"])
 
 else:
@@ -25,40 +40,55 @@ raise ValueError("Unknown initialisation mode")
 
 return theta0
 
+def compute_courant_number(U, dt, dx):
+"Computes courant number for stability diagnostics."
+if np.isscalar(U):
+return abs(U) * dt / dx
+else:
+return np.max(np.abs(U)) * dt / dx
 
-def solve_advection(x, t, theta0, U):
+def enforce_stability(U, dt, dx, safety_factor=0.9):
+"""
+Adjust dt automatically if Courant number exceeds 1.
+
+Returns
+dt_stable : float
+Adjusted stable timestep
+courant : float
+courant number after adjustment
+"""
+courant = compute_courant_number(U, dt, dx)
+if courant <= 1.0:
+return dt, courant
+
+dt_stable = safety_factor * dx / (abs(U) if np.isscalar(U) else np.max(np.abs(U)))
+return dt_stable, safety_factor
+
+def solve_advection(x, t, theta0, U, auto_stabilise=True):
 """
 Solve 1D advection equation using upwind finite differences.
 
-Parameters
-----------
-x : ndarray
-Spatial grid
-t : ndarray
-Time grid
-theta0 : ndarray
-Initial concentration
-U : float or ndarray
-Velocity (m/s), constant or spatially varying
-
-Returns
--------
-theta : ndarray
-Concentration field (time, space)
+If auto_stabilise=True, dt is reduced automatically to satisfy
+the courant condition instead of raising an error.
 """
 dx = x[1] - x[0]
 dt = t[1] - t[0]
+
+if auto_stabilise:
+dt_new, courant = enforce_stability(U, dt, dx)
+if dt_new != dt:
+t = np.arange(t[0], t[-1] + dt_new, dt_new)
+dt = dt_new
+else:
+courant = compute_courant_number(U, dt, dx)
+if courant > 1:
+raise ValueError(f"Unstable configuration: Courant number = {courant:.2f} > 1")
 
 nx = len(x)
 nt = len(t)
 
 theta = np.zeros((nt, nx))
 theta[0, :] = theta0
-
-# Courant number check (basic stability guidance)
-if np.isscalar(U):
-if U * dt / dx > 1:
-raise ValueError("Unstable configuration: Courant number > 1")
 
 for n in range(0, nt - 1):
 for i in range(1, nx):
@@ -67,20 +97,11 @@ theta[n + 1, i] = (
 theta[n, i]
 - u_local * dt / dx * (theta[n, i] - theta[n, i - 1])
 )
-# Boundary condition at x=0 (no inflow after initial release)
+# The boundary condition at x=0
 theta[n + 1, 0] = 0.0
 
-return theta
+return theta, t
 
-
-if __name__ == "__main__":
-# Example user-defined configuration
-x, t = create_domain(x_max=20.0, dx=0.2, t_max=300.0, dt=10.0)
-theta0 = initialise_concentration(x, mode="delta", value=250.0)
-theta = solve_advection(x, t, theta0, U=0.1)
-
-print("Simulation complete")
-print(f"Domain size: {len(x)} points, Time steps: {len(t)}")
 
 
 #######################################################
