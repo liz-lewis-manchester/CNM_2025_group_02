@@ -1,0 +1,87 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyO8ufJpLjE2Oh0WD0l6omf8",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/liz-lewis-manchester/CNM_2025_group_02/blob/task-1/User%20input%20function%20\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "1JGTnCzdVahs"
+      },
+      "outputs": [],
+      "source": [
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "\n",
+        "def user_inputs():\n",
+        "    print(\"this is a simulation calculator for the evolution of a pollutant concentration in a river\") # introducing the user to the modelling calculator\n",
+        "    print(\"infomation needed for calulation: (enusure all inputs are +ve and non-zero)\") # telling the user what inputs are expected from them\n",
+        "    x_max = int(input(\"what is the width of the model space (m) must be integer, x_max:\")) # asking for the input for the model space\n",
+        "    dx = float(input(\"Enter the space increment value (spatial resolution) (m), dx:\"))# asking for the input for the spetial resolution\n",
+        "    t_max = int(input(\"Enter the model run time (s) must be integer, t_max:\"))# asking for the input for the time space\n",
+        "    dt = float(input(\"Enter the temporal resolution (s), dt:\"))# asking for the input for the temporal resolution\n",
+        "    U = float(input(\"Enter the mean advective velocity (ms^-1), U:\"))# asking for the input for the mean velocity\n",
+        "    conc_distribution = np.zeros(x_max+1)  # Create an array of zeros to store initial concentration values, with length = x_max+1 to match spatial points\n",
+        "    if x_max <= 0 or dx <= 0 or t_max <= 0 or dt <= 0 or U <=0: # checking for null/ errounous inputs\n",
+        "      print(\"Input error, enusure all inputs are +ve and non-zero integers\")\n",
+        "      return user_inputs(); # redireting the user back to the fucntion. restarting the code\n",
+        "\n",
+        "    elif x_max < dx or t_max < dt: # checking for null/ errounous inputs\n",
+        "      print(\"either dt or dx have errornous value\")\n",
+        "      return user_inputs(); # redireting the user back to the fucntion. restarting the code\n",
+        "\n",
+        "    else:\n",
+        "      for x in range(x_max+1):\n",
+        "        t0_concentration_val = int(input(f\"what is the start concentration at point x = {x}:\")) # asking the user for the start concentration at each spatial point and asigning it to t0 value\n",
+        "        conc_distribution[x] = t0_concentration_val # then asinging the value to a loaction x which corresponds to the space. this strores the concentraion for each spatial unit\n",
+        "\n",
+        "      print(conc_distribution) # print the concentraion distribution as proof of funcitonality\n",
+        "      x_grid = np.arange(0,x_max +1 ,dx) # creating spatial array\n",
+        "      t_grid = np.arange(0,t_max +dt,dt) # creating time array\n",
+        "      print(x_grid) #  print spatail for proof\n",
+        "      print(t_max) # print time for proof\n",
+        "\n",
+        "      params = { # creating parameters that will be returned outside of the fucntion. globalising it\n",
+        "        \"x_max\": x_max,\n",
+        "        \"dx\": dx,\n",
+        "        \"t_max\": t_max,  # The integer input\n",
+        "        \"dt\": dt,\n",
+        "        \"U\": U,\n",
+        "        \"x_grid\": x_grid,\n",
+        "        \"t_grid\": t_grid, # Fixed name (was overwriting t_max)\n",
+        "        \"conc_distribution\": conc_distribution # Convert to numpy array for math\n",
+        "      }\n",
+        "      return params\n",
+        "\n",
+        "simulation_data = user_inputs(); # setting returned parameters to simulation varibable. this will be used to access the data  outside of this function\n",
+        "advection_calc(simulation_data);"
+      ]
+    }
+  ]
+}
