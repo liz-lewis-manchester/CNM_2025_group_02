@@ -33,3 +33,29 @@ The pollutant model that we have designed is run on google colab. we use the fol
 
 ---
 
+## How to Run
+Clone the repository: git clone https://github.com/liz-lewis-manchester/CNM_2025_group_02.git
+   cd CNM_2025_group_02
+Install required Python packages:pip install numpy pandas matplotlib
+
+Open and run the notebooks or scripts in the `src/` directory using Jupyter Notebook or
+JupyterLab.
+
+---
+
+## Collaboration and Version Control
+- Development was carried out using feature and development branches
+- Pull requests were used to merge work into the main branch
+- Code reviews and commit history document individual contributions
+
+---
+
+## Contributors
+All group members contributed to the project through:
+- Numerical modelling
+- Data handling and interpolation
+- Testing and validation
+- Visualisation
+- Documentation and GitHub management
+
+Individual contributions are visible through GitHub commit history and pull requests.
