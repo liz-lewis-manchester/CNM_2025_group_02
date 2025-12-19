@@ -33,6 +33,14 @@ The pollutant model that we have designed is run on google colab. we use the fol
 
 ---
 
+## Repository Structure
+
+CNM_2025_group_02/
+src/        # Source code and modelling notebooks
+test case/  # test case and results
+README.md   # Project documentation
+notebook/   # Codes
+
 ## How to Run
 Clone the repository: git clone https://github.com/liz-lewis-manchester/CNM_2025_group_02.git
    cd CNM_2025_group_02
