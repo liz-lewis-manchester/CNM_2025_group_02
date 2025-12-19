@@ -24,4 +24,12 @@ where:
 - U is the river velocity (m/s)
 
 ---
+## code libraries
+The pollutant model that we have designed is run on google colab. we use the following pyhton libraries to assist us:
+
+- numpy
+- pandas
+- matplotlib
+
+---
 
