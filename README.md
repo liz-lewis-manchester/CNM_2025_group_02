@@ -36,7 +36,7 @@ The pollutant model that we have designed is run on google colab. we use the fol
 ## How to Run
 Clone the repository: git clone https://github.com/liz-lewis-manchester/CNM_2025_group_02.git
    cd CNM_2025_group_02
-Install required Python packages:pip install numpy pandas matplotlib
+
 
 Open and run the notebooks or scripts in the `src/` directory using Jupyter Notebook or
 JupyterLab.
