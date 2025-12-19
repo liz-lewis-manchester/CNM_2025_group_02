@@ -41,6 +41,7 @@ Install required Python packages:pip install numpy pandas matplotlib
 Open and run the notebooks or scripts in the `src/` directory using Jupyter Notebook or
 JupyterLab.
 
+You will need to open the file initialconditions.csv which can be found in the src folder in the main branch. From here you can download this file and open it using the code. 
 ---
 
 ## Collaboration and Version Control
